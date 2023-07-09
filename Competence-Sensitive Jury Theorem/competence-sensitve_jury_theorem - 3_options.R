@@ -6,7 +6,7 @@ library(data.table)
 #        a vector with probability mass function for options
 # output: probability that first option wins under plurality rule
 
-plurality_rule <- function (total.voters, options, evidence) { 
+plurality_rule <- function (total.voters, options) {
   
   num.options = length(options)
   
@@ -43,7 +43,7 @@ plurality_rule <- function (total.voters, options, evidence) {
   # preferred = intersect(preferred_b, preffered_c)
   
   ########################################################################
-
+  
   # Choosing only the cases where the first option wins
   df = df[preferred,]
   
@@ -64,51 +64,71 @@ plurality_rule <- function (total.voters, options, evidence) {
   whole.group = head(table, rows)
   prob = sum(whole.group$probability)
   
-  final_prob = (evidence*prob) + ((1-evidence)*(1-prob))
-  
-  return(final_prob)
-  
+  return(prob)
 }
 
-#Example to run the function
+competence_sensitivity = function(total.voters, options) {
+  competence <- c(0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1)
+  probability_of_competence <- c(0.01, 0.025, 0.05, 0.0875, 0.15, 0.375, 0.18, 0.1, 0.0225)
+  
+  df = data.frame(competence, probability_of_competence)
+  
+  tends_to_competence = which(df[,1] > 0.5)
+  
+  tends_to_competence = df[tends_to_competence,]
+  
+  converges_to = sum(tends_to_competence$probability_of_competence) + (0.5*df[df$competence == 0.5, 2])
+  gamma = which(df[,1] < 0.5)
+  gamma = df[gamma, ]
+  gamma = sum(gamma$probability_of_competence) + (0.5*df[df$competence == 0.5, 2])
+  
+  summation = 0
+  
+  for (i in 1:nrow(tends_to_competence)) {
+    first = tends_to_competence[i,1]
+    prob = plurality_rule(total.voters, options)
+    delta = df[df$competence == first, 2] - df[df$competence == (1-first), 2]
+    summation = summation + (prob*delta)
+  }
+  
+  prob = gamma + summation
+  return(prob)
+}
+
 
 ##voters
-total.voters = 4
+total.voters = 11
 ##options
-options = c(0.9, 0.05, 0.05)
-## evidence
-p_e = 0.51
-## one call of the function 
-plurality_rule(total.voters, options, p_e)
+options = c(0.625, 0.1875, 0.1875)
 
+competence_sensitivity(total.voters, options)
 
 # arriving at asymptote...
-max = p_e - 0.001
+max = 0.7525 - 0.001
 calc = 0
-options =  c(0.50, 0.25, 0.25)
-
-start = 5
+start = 11
 
 while (max - calc > 0.00001) {
-  calc = plurality_rule(start , options, p_e)
+  calc = competence_sensitivity(start, options)
   print(start)
   print(calc)
   gc()
   start = start + 1
 }
+
 # computing the winning probabilities
 values = c(7:21)
-p = c()
+probs = c()
 for (i in values){  
-  p<- c(p, plurality_rule(i , options, p_e) )
+  probs <- c(probs, competence_sensitivity(i , options) )
 }
 
 
 # plotting the vector of winning probabilities against number of voters
 
-plot( values, p , 
+plot( values, probs, 
       type = 'l', xlab="Number of voters", ylab = "Collective Competence",
-      ylim = c(min(p), max(p)) 
+      ylim = c(min(probs), max(probs)) 
 )
 title( "Probability that first option wins using plurality rule" )
 abline( v=7)
