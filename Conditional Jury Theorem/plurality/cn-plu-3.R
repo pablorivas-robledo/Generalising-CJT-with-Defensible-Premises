@@ -31,16 +31,16 @@ plurality_rule <- function (total.voters, options, evidence) {
   #Filtering cases in which the first option is the winning options with an specific algorithm 
   
   #Un-comment for three options
-  preferred = intersect(which(df[,1] > df[,2]), which(df[,1] > df[,3]))
+  #preferred = intersect(which(df[,1] > df[,2]), which(df[,1] > df[,3]))
   
   #Un-comment for four options
   #preferred_b = intersect(which(df[,1] > df[,2]), which(df[,1] > df[,3]))
   #preferred = intersect(preferred_b, which(df[,1] > df[,4]))
   
   #Un-comment for five options
-  # preferred_b = intersect(which(df[,1] > df[,2]), which(df[,1] > df[,3]))
-  # preffered_c = intersect(which(df[,1] > df[,4]), which(df[,1] > df[,5]))
-  # preferred = intersect(preferred_b, preffered_c)
+   preferred_b = intersect(which(df[,1] > df[,2]), which(df[,1] > df[,3]))
+   preffered_c = intersect(which(df[,1] > df[,4]), which(df[,1] > df[,5]))
+   preferred = intersect(preferred_b, preffered_c)
   
   ########################################################################
 
@@ -73,13 +73,27 @@ plurality_rule <- function (total.voters, options, evidence) {
 #Example to run the function
 
 ##voters
-total.voters = 4
+total.voters = 11
 ##options
 options = c(0.9, 0.05, 0.05)
 ## evidence
 p_e = 0.51
 ## one call of the function 
 plurality_rule(total.voters, options, p_e)
+
+
+#reproducing L&G
+
+cases = c(11, 51, 101)
+options = c(0.201, (1-0.201)/4, (1-0.201)/4, (1-0.201)/4, (1-0.201)/4)
+p_e = 0.8
+repro = c()
+for (i in cases){
+  repro = c(repro, plurality_rule(i, options, p_e))
+  print(i)
+  gc()
+}
+repro
 
 
 # arriving at asymptote...
