@@ -39,7 +39,10 @@ for (n in 1:nrow(perms)) {
 
 simulate_jury <- function(n_voters, final_probabilities) {
   votes <- rmultinom(n_voters, 1, final_probabilities)
-  ((sum(votes[1,]) + sum(votes[2,]))*2) + sum(votes[3,]) + sum(votes[5,]) > ((sum(votes[3,]) + sum(votes[4,]))*2) + sum(votes[1,]) + sum(votes[6,]) & ((sum(votes[1,]) + sum(votes[2,]))*2) + sum(votes[3,]) + sum(votes[5,]) > ((sum(votes[5,]) + sum(votes[6,]))*2) + sum(votes[2,]) + sum(votes[2,])
+  ((sum(votes[1,]) + sum(votes[2,]))*2) + sum(votes[3,]) + sum(votes[5,]) > 
+    ((sum(votes[3,]) + sum(votes[4,]))*2) + sum(votes[1,]) + sum(votes[6,]) & 
+    ((sum(votes[1,]) + sum(votes[2,]))*2) + sum(votes[3,]) + sum(votes[5,]) > 
+    ((sum(votes[5,]) + sum(votes[6,]))*2) + sum(votes[2,]) + sum(votes[2,])
 }
 
 results <- map_dbl(1:10000, ~simulate_jury(n_voters, final_probabilities))
