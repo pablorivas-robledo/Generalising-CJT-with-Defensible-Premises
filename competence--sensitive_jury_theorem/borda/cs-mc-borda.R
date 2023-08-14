@@ -78,3 +78,16 @@ options = c(0.625, 0.1875, 0.1875)
 final_probabilities = rankings(options)
 
 competence_sensitivity(total.voters)
+
+
+# arriving at asymptote...
+calc = 0
+start = 3
+
+while (0.752 > calc) {
+  calc = competence_sensitivity(start, options)
+  print(start)
+  print(calc)
+  gc()
+  start = start + 1
+}

@@ -101,11 +101,10 @@ options = c(0.625, 0.1875, 0.1875)
 competence_sensitivity(total.voters, options)
 
 # arriving at asymptote...
-max = 0.7525 - 0.001
 calc = 0
-start = 11
+start = 3
 
-while (max - calc > 0.00001) {
+while (0.752 > calc) {
   calc = competence_sensitivity(start, options)
   print(start)
   print(calc)
