@@ -48,7 +48,7 @@ plurality_rule <- function (total.voters, options) {
   
 }
 
-competence_sensitivity = function(total.voters) {
+competence_sensitivity = function(total.voters, options) {
   competence <- c(0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1)
   probability_of_competence <- c(0.01, 0.025, 0.05, 0.0875, 0.15, 0.375, 0.18, 0.1, 0.0225)
   
@@ -67,7 +67,7 @@ competence_sensitivity = function(total.voters) {
   
   for (i in 1:nrow(tends_to_competence)) {
     first = tends_to_competence[i,1]
-    options = c(first, 1-first)
+    #options = c(first, 1-first)
     prob = plurality_rule(total.voters, options)
     delta = df[df$competence == first, 2] - df[df$competence == (1-first), 2]
     summation = summation + (prob*delta)
@@ -77,9 +77,9 @@ competence_sensitivity = function(total.voters) {
   return(prob)
 }
 
-total.voters = 11
-
-competence_sensitivity(total.voters)
+total.voters = 3
+options = c(0.51, 0.49)
+competence_sensitivity(total.voters, options)
 
 # arriving at asymptote...
 max = 0.7525 - 0.001
@@ -95,10 +95,10 @@ while (max - calc > 0.00001) {
 }
 
 # computing the winning probabilities
-values = c(7:21)
+values = c(3:21)
 probs = c()
 for (i in values){  
-  probs <- c(probs, competence_sensitivity(i) )
+  probs <- c(probs, competence_sensitivity(i, options) )
 }
 
 
@@ -106,8 +106,10 @@ for (i in values){
 
 plot( values, probs, 
       type = 'l', xlab="Number of voters", ylab = "Collective Competence",
-      ylim = c(min(probs), max(probs)) 
+      ylim = c(min(probs), max(probs)),
+      col = "red",
+      lwd = 4
 )
 title( "Probability that first option wins using plurality rule" )
-abline( v=7)
+abline( h=0.51, lwd = 4)
 
